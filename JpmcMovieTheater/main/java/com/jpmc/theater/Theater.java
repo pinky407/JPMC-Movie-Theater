@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -46,16 +47,24 @@ public class Theater {
     public void printSchedule() {
         System.out.println(LocalDate.now());
         System.out.println("===================================================");
-        schedule.forEach(s ->
-                System.out.println(s.getSequenceOfTheDay() + ": " + s.getStartTime() + " " + s.getMovie().getTitle() + " " + humanReadableFormat(s.getMovie().getRunningTime()) + " $" + s.getMovieFee())
-        );
-       
-        System.out.println("===================================================");
         
+        List<Schedule> schedules = new ArrayList<>();
+        
+        for(Showing s : schedule) {
+        	Schedule sch = new Schedule();
+        	sch.setSequenceOfTheDay(s.getSequenceOfTheDay());
+        	sch.setRunningTime(humanReadableFormat(s.getMovie().getRunningTime()));   
+        	sch.setShowStartTime(s.getStartTime().toString());
+        	sch.setTicketPrice(s.getMovieFee());
+        	sch.setTitle(s.getMovie().getTitle());
+        	System.out.println(sch.toString());
+        	schedules.add(sch);
+        }
+                
         System.out.println("JSON Format");
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(schedule);
+            String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(schedules);
             System.out.println(json);
          } catch(Exception e) {
             e.printStackTrace();
